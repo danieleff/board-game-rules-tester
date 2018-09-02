@@ -4,16 +4,18 @@ import MonacoEditor from 'react-monaco-editor';
 import './BoardGameRules.css';
 
 interface BoardGameRulesProps {
+    indexString: string;
     rulesString: string;
     rendererString: string;
     styleString: string;
+    onIndexStringChange: (indexString: string) => void
     onRulesStringChange: (rulesString: string) => void
     onRendererStringChange: (rendererString: string) => void
     onStyleStringChange: (styleString: string) => void
 }
 
 interface BoardGameRulesState {
-    tab: "Rules.tsx" | "Renderer.tsx" | "style.css";
+    tab: "index.d.tsx" | "Rules.tsx" | "Renderer.tsx" | "style.css";
 }
 
 export class BoardGameRules extends React.Component<BoardGameRulesProps, BoardGameRulesState> {
@@ -26,7 +28,7 @@ export class BoardGameRules extends React.Component<BoardGameRulesProps, BoardGa
         }
     }
     
-    private onSelectTab(selectedTab: "Rules.tsx" | "Renderer.tsx" | "style.css") {
+    private onSelectTab(selectedTab: "index.d.tsx" | "Rules.tsx" | "Renderer.tsx" | "style.css") {
         this.setState({tab: selectedTab});
     }
 
@@ -36,6 +38,10 @@ export class BoardGameRules extends React.Component<BoardGameRulesProps, BoardGa
         return <div style={{height: "100%"}}>
             <nav>
                 <ul className="rules_tab">
+                    <li className={"rules_tab-item " + (this.state.tab == "index.d.tsx" ? "rules_tab-item--is_active" : "")}
+                        onClick={this.onSelectTab.bind(this, "index.d.tsx")}>
+                        index.d.tsx
+                    </li>
                     <li className={"rules_tab-item " + (this.state.tab == "Rules.tsx" ? "rules_tab-item--is_active" : "")}
                         onClick={this.onSelectTab.bind(this, "Rules.tsx")}>
                         Rules.tsx
@@ -51,6 +57,20 @@ export class BoardGameRules extends React.Component<BoardGameRulesProps, BoardGa
                 </ul>
             </nav>
             
+            <div style={{height: "100%", display: this.state.tab == "index.d.tsx" ? undefined : "none"}}>
+                <MonacoEditor
+                    width="100%"
+                    height="100%"
+                    language=""
+                    theme="vs-dark"
+                    value={this.props.indexString}
+                    options={{
+                        selectOnLineNumbers: true, 
+                        automaticLayout: true
+                    }}
+                    onChange={(e) => this.props.onIndexStringChange(e)} 
+                    />
+            </div>
             <div style={{height: "100%", display: this.state.tab == "Rules.tsx" ? undefined : "none"}}>
                 <MonacoEditor
                     width="100%"

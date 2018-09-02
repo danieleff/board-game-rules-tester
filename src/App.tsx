@@ -17,6 +17,8 @@ interface IAppState {
   game?: IGame;
   actions?: Actions<IGame>;
 
+  indexString: string,
+
   rulesString: string;
   rules?: IGameRules;
 
@@ -34,6 +36,7 @@ export class App extends React.Component<IAppProps, IAppState> {
     super(props);
 
     this.state = {
+      indexString: require(`!raw-loader!./games/TicTacToe/index.d.ts`),
       rulesString: require(`!raw-loader!./games/TicTacToe/Rules.tsx`),
       rendererString: require(`!raw-loader!./games/TicTacToe/Renderer.tsx`),
       styleString: require(`!raw-loader!./games/TicTacToe/style.css`),
@@ -62,12 +65,16 @@ export class App extends React.Component<IAppProps, IAppState> {
   private update(prevState?: IAppState) {
     if (!prevState || prevState.rulesString != this.state.rulesString) {
       const rules = compileString<IGameRules>(this.state.rulesString);
-      this.setState({rules});
+      if (rules) {
+        this.setState({rules});
+      }
     }
 
     if (!prevState || prevState.rendererString != this.state.rendererString) {
       const renderer = compileString<IGameRenderer>(this.state.rendererString);
-      this.setState({renderer});
+      if (renderer) {
+        this.setState({renderer});
+      }
     }
 
     if (!this.state.game && this.state.rules) {
@@ -80,6 +87,10 @@ export class App extends React.Component<IAppProps, IAppState> {
     const actions = new Actions();
     rules.getActions(game, actions);
     return actions;
+  }
+
+  private onIndexStringChange(indexString: string) {
+    this.setState({indexString});
   }
 
   private onRulesStringChange(rulesString: string) {
@@ -149,9 +160,11 @@ export class App extends React.Component<IAppProps, IAppState> {
           <SplitPane split="horizontal" defaultSize="80%">
             <SplitPane split="vertical" defaultSize="50%">
               <BoardGameRules
+                  indexString={this.state.indexString}
                   rulesString={this.state.rulesString}
                   rendererString={this.state.rendererString}
                   styleString={this.state.styleString}
+                  onIndexStringChange={this.onIndexStringChange.bind(this)}
                   onRulesStringChange={this.onRulesStringChange.bind(this)}
                   onRendererStringChange={this.onRendererStringChange.bind(this)}
                   onStyleStringChange={this.onStyleStringChange.bind(this)}
