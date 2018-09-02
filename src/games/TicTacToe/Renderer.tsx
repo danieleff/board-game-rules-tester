@@ -1,5 +1,10 @@
 import * as React from 'react';
 
+/**
+ * Tic Tac Toe player:
+ * 1 - X
+ * 2 - O
+ */
 function ox(player: number) {
   switch(player) {
     case 0: return ".";
@@ -9,6 +14,9 @@ function ox(player: number) {
   }
 }
 
+/**
+ * For a given game board, renders the game to HTML
+ */
 export function render(game: ITicTacToe) {
   return <div>
       <p>Játékos: {ox(game.currentPlayer)}</p>

@@ -1,3 +1,6 @@
+/**
+ * Initial state, the game starts with this
+ */
 export function start(): ITicTacToe {
     return {
         playerCount: 2,
@@ -8,6 +11,9 @@ export function start(): ITicTacToe {
     }
 };
 
+/**
+ * Actions, for a given game state, checks what the current player can do
+ */
 export function getActions(game: ITicTacToe, actions: IActions) {
 
   for(let x=0; x<=2; x++) {
@@ -28,6 +34,9 @@ export function getActions(game: ITicTacToe, actions: IActions) {
 
 };
 
+/**
+ * For a given game state, returns the winner
+ */
 export function getWinner(game: ITicTacToe) {
   let table = game.table;
 
