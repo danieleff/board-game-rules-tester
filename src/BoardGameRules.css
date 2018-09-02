@@ -1,0 +1,17 @@
+.rules_tab {
+    margin: 0 0.5em;
+    background-color: #2e2e2e;
+    border-top: #777;
+}
+
+.rules_tab-item {
+    padding: 0.5em;
+    display: inline-block;
+
+    cursor: pointer;
+}
+
+.rules_tab-item--is_active {
+    color: rgb(49, 184, 32);
+    background-color: #1e1e1e;
+}
