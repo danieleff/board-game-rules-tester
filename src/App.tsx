@@ -1,13 +1,14 @@
 import * as React from 'react';
-import * as ReactDOM from 'react-dom';
-import { BoardGameRules } from './BoardGameRules';
-import { BoardRendered } from './BoardRenderer';
+import { BoardGameRulesComponent } from './component/BoardRulesComponent';
+import { BoardGameRenderedComponent } from './component/BoardRenderComponent';
 import SplitPane from 'react-split-pane';
 
 import './App.css';
 import './splitpane.css';
-import { compileString } from './Compiler';
-import { Actions } from './Actions';
+import { compileString } from './utils/Compiler';
+import { BoardGameRenderer } from './BoardGameRenderer';
+import { IGame } from './BoardGame';
+import { BoardGameRules, IAction } from './BoardGameRules';
 
 interface IAppProps {
 
@@ -15,15 +16,15 @@ interface IAppProps {
 
 interface IAppState {
   game?: IGame;
-  actions?: Actions<IGame>;
+  actions: IAction<IGame>[];
 
   indexString: string,
 
   rulesString: string;
-  rules?: IGameRules;
+  rules?: BoardGameRules<IGame>;
 
   rendererString: string;
-  renderer?: IGameRenderer;
+  renderer?: {new(): BoardGameRenderer};
 
   styleString: string;
 }
@@ -36,10 +37,12 @@ export class App extends React.Component<IAppProps, IAppState> {
     super(props);
 
     this.state = {
-      indexString: require(`!raw-loader!./games/TicTacToe/index.d.ts`),
-      rulesString: require(`!raw-loader!./games/TicTacToe/Rules.tsx`),
-      rendererString: require(`!raw-loader!./games/TicTacToe/Renderer.tsx`),
-      styleString: require(`!raw-loader!./games/TicTacToe/style.css`),
+      indexString: require(`!raw-loader!./games/Drag/index.d.ts`),
+      rulesString: require(`!raw-loader!./games/Drag/Rules.tsx`),
+      rendererString: require(`!raw-loader!./games/Drag/Renderer.tsx`),
+      styleString: require(`!raw-loader!./games/Drag/style.css`),
+
+      actions: []
     }
 
     this.styleElement = document.createElement("style");
@@ -64,16 +67,18 @@ export class App extends React.Component<IAppProps, IAppState> {
 
   private update(prevState?: IAppState) {
     if (!prevState || prevState.rulesString != this.state.rulesString) {
-      const rules = compileString<IGameRules>(this.state.rulesString);
-      if (rules) {
-        this.setState({rules});
+      const rulesClass = compileString<{default: {new(): BoardGameRules<IGame>}}>(this.state.rulesString);
+
+      if (rulesClass) {
+        const rules = new rulesClass.default();
+        this.setState({rules: rules});
       }
     }
 
     if (!prevState || prevState.rendererString != this.state.rendererString) {
-      const renderer = compileString<IGameRenderer>(this.state.rendererString);
+      const renderer = compileString<{default: {new(): BoardGameRenderer}}>(this.state.rendererString);
       if (renderer) {
-        this.setState({renderer});
+        this.setState({renderer: renderer.default});
       }
     }
 
@@ -83,10 +88,10 @@ export class App extends React.Component<IAppProps, IAppState> {
     }
   }
 
-  private getActions(game: IGame, rules: IGameRules) {
-    const actions = new Actions();
-    rules.getActions(game, actions);
-    return actions;
+  private getActions(game: IGame, rules: BoardGameRules<IGame>) {
+    rules.clearActions();
+    rules.getActions(game);
+    return rules.getActionList();
   }
 
   private onIndexStringChange(indexString: string) {
@@ -118,18 +123,18 @@ export class App extends React.Component<IAppProps, IAppState> {
 
   private onAction(actionIndex: number) {
     if (this.state.actions && this.state.rules) {
-      const newGame = this.state.actions.getActionList()[actionIndex].game;
+      const newGame = this.state.actions[actionIndex].game;
 
       const winner = this.state.rules.getWinner(newGame);
 
       newGame.winner = winner || undefined;
 
-      var actions: Actions<IGame>;
+      var actions: IAction<IGame>[];
 
       if (!newGame.winner) {
         actions = this.getActions(newGame, this.state.rules);
       } else {
-        actions = new Actions();
+        actions = [];
       }
 
       this.setState({
@@ -144,42 +149,45 @@ export class App extends React.Component<IAppProps, IAppState> {
     if (this.state.game && this.state.renderer) {
 
       try {
-        rendered = this.state.renderer.render(this.state.game);
-      } catch(e) {}
+        
+        rendered = React.createElement((this.state.renderer), {
+            game: this.state.game,
+            actions: this.state.actions,
+            onAction: this.onAction.bind(this)
+          }
+        );
+        console.log(rendered);
+      } catch(e) {console.error(e)} 
     }
 
     return (
       <div style={{width: "100%", height: "100%", display: "flex", flexDirection: "column"}}>
-        <div>
-          <h1>Board Game Rules Tester</h1>
-          
-          <button onClick={this.onRestart.bind(this, this.state.rules)}>Restart</button>
+        <div style={{display: "flex", alignItems: "center", backgroundColor: "#2e2e2e"}}>
+          <h3 style={{flex: "1", margin: "0.5em"}}>Board Game Rules Tester</h3>
+          <div style={{margin: "1em"}}>
+            <button onClick={this.onRestart.bind(this, this.state.rules)}>Restart game</button>
+          </div>
         </div>
 
         <div style={{flex: 1, position: "relative", height: "100%"}}>
-          <SplitPane split="horizontal" defaultSize="80%">
-            <SplitPane split="vertical" defaultSize="50%">
-              <BoardGameRules
-                  indexString={this.state.indexString}
-                  rulesString={this.state.rulesString}
-                  rendererString={this.state.rendererString}
-                  styleString={this.state.styleString}
-                  onIndexStringChange={this.onIndexStringChange.bind(this)}
-                  onRulesStringChange={this.onRulesStringChange.bind(this)}
-                  onRendererStringChange={this.onRendererStringChange.bind(this)}
-                  onStyleStringChange={this.onStyleStringChange.bind(this)}
-                />
-              <BoardRendered
-                    game={this.state.game}
-                    actions={this.state.actions}
-                    onAction={this.onAction.bind(this)}
-              >
-                {rendered}
-              </BoardRendered>
-            </SplitPane>
-            <div>
-              Console:...
-            </div>
+          <SplitPane split="vertical" defaultSize="50%">
+            <BoardGameRulesComponent
+                indexString={this.state.indexString}
+                rulesString={this.state.rulesString}
+                rendererString={this.state.rendererString}
+                styleString={this.state.styleString}
+                onIndexStringChange={this.onIndexStringChange.bind(this)}
+                onRulesStringChange={this.onRulesStringChange.bind(this)}
+                onRendererStringChange={this.onRendererStringChange.bind(this)}
+                onStyleStringChange={this.onStyleStringChange.bind(this)}
+              />
+            <BoardGameRenderedComponent
+                  game={this.state.game}
+                  actions={this.state.actions}
+                  onAction={this.onAction.bind(this)}
+            >
+              {rendered}
+            </BoardGameRenderedComponent>
           </SplitPane>
         </div>
       </div>

@@ -1,0 +1,25 @@
+.available {
+    /*filter: drop-shadow( 0 0 5px green );*/
+    cursor: pointer;
+    transition: 200ms filter ease-in-out;
+
+    -webkit-touch-callout: none; /* iOS Safari */
+      -webkit-user-select: none; /* Safari */
+       -khtml-user-select: none; /* Konqueror HTML */
+         -moz-user-select: none; /* Firefox */
+          -ms-user-select: none; /* Internet Explorer/Edge */
+              user-select: none; /* Non-prefixed version, currently
+                                    supported by Chrome and Opera */
+}
+
+.mouse-passthrough {
+    pointer-events: none;
+}
+
+.available:hover {
+    /*filter: drop-shadow( 0 0 10px blue );*/
+}
+
+.dropzone .box {
+    fill: red;
+}

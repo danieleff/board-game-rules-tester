@@ -1,6 +1,9 @@
+//import * as bg from 'boardgame';
+
 /**
  * Initial state, the game starts with this
  */
+/*
 export function start(): ITicTacToe {
     return {
         playerCount: 2,
@@ -10,10 +13,11 @@ export function start(): ITicTacToe {
                 [0, 0, 0]]
     }
 };
-
+*/
 /**
  * Actions, for a given game state, checks what the current player can do
  */
+/*
 export function getActions(game: ITicTacToe, actions: IActions) {
 
   for(let x=0; x<=2; x++) {
@@ -21,22 +25,22 @@ export function getActions(game: ITicTacToe, actions: IActions) {
 
       if (game.table[x][y] == 0) {
 
-        let copy = clone(game);
+        /*let copy = bg.copy(game);
         
         copy.table[x][y] = copy.currentPlayer;
         copy.currentPlayer = copy.currentPlayer == 1 ? 2 : 1;
 
-        actions.add("Lépés: " + x + " " + y, copy);
+        actions.add("Lépés: " + x + " " + y, copy);* /
       }
       
     }
   }
 
 };
-
+*/
 /**
  * For a given game state, returns the winner
- */
+ *//*
 export function getWinner(game: ITicTacToe) {
   let table = game.table;
 
@@ -54,3 +58,4 @@ export function getWinner(game: ITicTacToe) {
 
   return null;
 }
+*/

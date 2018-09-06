@@ -1,9 +1,10 @@
 import * as React from 'react';
-import { Actions } from './Actions';
+import { IGame } from '../BoardGame';
+import { IAction } from '../BoardGameRules';
 
 interface BoardRenderedProps {
     game?: IGame;
-    actions?: Actions<IGame>;
+    actions?: IAction<IGame>[];
     onAction: (key: number) => void;
 }
 
@@ -11,17 +12,17 @@ interface BoardRenderedState {
     
 }
 
-export class BoardRendered extends React.Component<BoardRenderedProps, BoardRenderedState> {
+export class BoardGameRenderedComponent extends React.Component<BoardRenderedProps, BoardRenderedState> {
     render() {
-        return <div style={{height: "100%", overflow: "auto"}}>
+        return <div style={{height: "100%", width: "100%", overflow: "auto"}}>
             {this.props.children}
 
             <hr/>
             Actions:
             {
-                this.props.actions && this.props.actions.getActionList().length > 0
+                this.props.actions && this.props.actions.length > 0
                 ?
-                this.props.actions.getActionList().map((action, index) => {
+                this.props.actions.map((action, index) => {
                     return <div key={index}>
                         <button onClick={() => this.props.onAction(index)}>
                             {action.name}

@@ -1,0 +1,22 @@
+html {
+    font-family: sans-serif;
+}
+.wrapper {
+    fill: #579C87;
+    stroke: black;
+    stroke-width: 0.5;
+}
+.text-title {
+    fill: #FE7F2D;
+    font-size: 6px;
+}
+.text-num {
+    fill: white;
+    font-size: 10px;
+}
+.text-bottom {
+    fill: #1e1e1e;
+    font-size: 5px;
+    font-weight: bold;
+}
+  

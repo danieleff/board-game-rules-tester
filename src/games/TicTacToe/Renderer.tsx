@@ -17,6 +17,7 @@ function ox(player: number) {
 /**
  * For a given game board, renders the game to HTML
  */
+/*
 export function render(game: ITicTacToe) {
   return <div>
       <p>Játékos: {ox(game.currentPlayer)}</p>
@@ -40,3 +41,4 @@ export function render(game: ITicTacToe) {
       </table>
     </div>;
 }
+*/
