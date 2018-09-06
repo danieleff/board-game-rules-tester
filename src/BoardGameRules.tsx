@@ -8,11 +8,17 @@ export abstract class BoardGameRules<T extends IGame> {
 
     private actions: IAction<T>[];
 
+    protected game: T;
+
     abstract start(): T;
 
-    abstract getActions(game: T): void;
+    abstract getActions(): void;
 
-    abstract getWinner(game: T): number | undefined;
+    abstract getWinner(): number | undefined;
+
+    setGame(game: T) {
+        this.game = game;
+    }
 
     clearActions() {
         this.actions = [];

@@ -11,14 +11,14 @@ export default class Rules extends bg.BoardGameRules<IDrag> {
         }
     };
 
-    getActions(game: IDrag) {
+    getActions() {
         
-        game.tokens.map((token, fromIndex) => {
+        this.game.tokens.map((token, fromIndex) => {
             if (token) {
-                game.tokens.map((isOccupied, toIndex) => {
+                this.game.tokens.map((isOccupied, toIndex) => {
                     if (!isOccupied) {
 
-                        const copy = bg.copy(game);
+                        const copy = bg.copy(this.game);
                         copy.tokens[fromIndex] = false;
                         copy.tokens[toIndex] = true;
 
@@ -30,7 +30,7 @@ export default class Rules extends bg.BoardGameRules<IDrag> {
 
     };
 
-    getWinner(game: IDrag) {
+    getWinner() {
         return undefined;
     }
 }

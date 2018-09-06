@@ -1,6 +1,7 @@
 import * as React from 'react';
 import * as bg from 'board-game-rules-tester';
 import { IDrag } from '.';
+import Rules from './Rules';
 
 interface IDragState {
     id?: string;
@@ -19,7 +20,7 @@ interface IRendererState {
 const DropContext = React.createContext<IDragState>({x: 0, y: 0});
 
 
-export default class Renderer extends bg.BoardGameRenderer<IDrag, IRendererState> {
+export default class Renderer extends bg.BoardGameRenderer<Rules, IDrag, IRendererState> {
 
     constructor(props: any) {
         super(props);

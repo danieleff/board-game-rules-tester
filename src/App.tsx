@@ -24,7 +24,7 @@ interface IAppState {
   rules?: BoardGameRules<IGame>;
 
   rendererString: string;
-  renderer?: {new(): BoardGameRenderer};
+  renderer?: {new(): BoardGameRenderer<BoardGameRules<IGame>>};
 
   styleString: string;
 }
@@ -76,7 +76,7 @@ export class App extends React.Component<IAppProps, IAppState> {
     }
 
     if (!prevState || prevState.rendererString != this.state.rendererString) {
-      const renderer = compileString<{default: {new(): BoardGameRenderer}}>(this.state.rendererString);
+      const renderer = compileString<{default: {new(): BoardGameRenderer<BoardGameRules<IGame>>}}>(this.state.rendererString);
       if (renderer) {
         this.setState({renderer: renderer.default});
       }
@@ -89,8 +89,9 @@ export class App extends React.Component<IAppProps, IAppState> {
   }
 
   private getActions(game: IGame, rules: BoardGameRules<IGame>) {
+    rules.setGame(game);
     rules.clearActions();
-    rules.getActions(game);
+    rules.getActions();
     return rules.getActionList();
   }
 
@@ -125,7 +126,9 @@ export class App extends React.Component<IAppProps, IAppState> {
     if (this.state.actions && this.state.rules) {
       const newGame = this.state.actions[actionIndex].game;
 
-      const winner = this.state.rules.getWinner(newGame);
+      this.state.rules.setGame(newGame);
+
+      const winner = this.state.rules.getWinner();
 
       newGame.winner = winner || undefined;
 
@@ -146,17 +149,17 @@ export class App extends React.Component<IAppProps, IAppState> {
 
   public render() {
     var rendered = null;
-    if (this.state.game && this.state.renderer) {
+    if (this.state.game && this.state.renderer && this.state.rules) {
 
       try {
         
         rendered = React.createElement((this.state.renderer), {
             game: this.state.game,
             actions: this.state.actions,
+            rules: this.state.rules,
             onAction: this.onAction.bind(this)
           }
         );
-        console.log(rendered);
       } catch(e) {console.error(e)} 
     }
 

@@ -19,7 +19,7 @@ window["require"] = (name: string) => {
   switch(name) {
     case 'react': return React;
     case 'board-game-rules-tester': return thisModule;
-    default: console.log("Not supported: " + name);
+    default: console.log("Unknown module: " + name);
   }
   return null;
 }

@@ -7,4 +7,9 @@ import { IGame } from "board-game-rules-tester";
 
 export interface IDrag extends IGame {
     tokens: boolean[];
+    //players: IPlayer[];
+}
+
+export interface IPlayer {
+    
 }
