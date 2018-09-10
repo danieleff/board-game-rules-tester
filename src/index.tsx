@@ -12,6 +12,8 @@ export * from './BoardGameRenderer';
 
 export * from './BoardGameRules';
 
+export * from './component/SVGBoard';
+
 export * from './utils/Utils';
 
 

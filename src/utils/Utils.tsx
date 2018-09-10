@@ -1,6 +1,6 @@
 import * as React from 'react';
 
-export function copy(obj: any) {
+export function copy<T>(obj: T): T {
     return JSON.parse(JSON.stringify(obj));
 }
 

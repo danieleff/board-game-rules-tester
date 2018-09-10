@@ -16,7 +16,7 @@ interface IAppProps {
 
 interface IAppState {
   game?: IGame;
-  actions: IAction<IGame>[];
+  actions: IAction<IGame, any>[];
 
   indexString: string,
 
@@ -91,7 +91,7 @@ export class App extends React.Component<IAppProps, IAppState> {
   private getActions(game: IGame, rules: BoardGameRules<IGame>) {
     rules.setGame(game);
     rules.clearActions();
-    rules.getActions();
+    rules.createActions();
     return rules.getActionList();
   }
 
@@ -114,7 +114,7 @@ export class App extends React.Component<IAppProps, IAppState> {
 
   private onRestart() {
     if (this.state.rules) {
-      const game = this.state.rules.start();
+      const game = this.state.rules.getStartGame();
       this.setState({
         game: game,
         actions: this.getActions(game, this.state.rules)
@@ -128,16 +128,12 @@ export class App extends React.Component<IAppProps, IAppState> {
 
       this.state.rules.setGame(newGame);
 
-      const winner = this.state.rules.getWinner();
+      newGame.winner = this.state.rules.getWinner();
 
-      newGame.winner = winner || undefined;
+      var actions: IAction<IGame, any>[] = [];
 
-      var actions: IAction<IGame>[];
-
-      if (!newGame.winner) {
+      if (typeof newGame.winner === 'undefined') {
         actions = this.getActions(newGame, this.state.rules);
-      } else {
-        actions = [];
       }
 
       this.setState({

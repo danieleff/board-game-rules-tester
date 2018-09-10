@@ -1,22 +1,23 @@
 import { IGame, IActions } from "./BoardGame";
 
-export interface IAction<T extends IGame> {
+export interface IAction<GAME extends IGame, CHANGE> {
     name: string;
-    game: T;
+    game: GAME;
+    change?: CHANGE;
 }
-export abstract class BoardGameRules<T extends IGame> {
+export abstract class BoardGameRules<GAME extends IGame, CHANGE = any> {
 
-    private actions: IAction<T>[];
+    private actions: IAction<GAME, CHANGE>[];
 
-    protected game: T;
+    protected game: GAME;
 
-    abstract start(): T;
+    abstract getStartGame(): GAME;
 
-    abstract getActions(): void;
+    abstract createActions(): void;
 
     abstract getWinner(): number | undefined;
 
-    setGame(game: T) {
+    setGame(game: GAME) {
         this.game = game;
     }
 
@@ -24,9 +25,9 @@ export abstract class BoardGameRules<T extends IGame> {
         this.actions = [];
     }
 
-    addAction(name: string, game: T) {
+    addAction(name: string, game: GAME, change?: CHANGE) {
         this.actions.push({
-            name, game
+            name, game, change
         });
     }
 

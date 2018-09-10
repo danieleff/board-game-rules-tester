@@ -4,7 +4,7 @@ import { IAction } from '../BoardGameRules';
 
 interface BoardRenderedProps {
     game?: IGame;
-    actions?: IAction<IGame>[];
+    actions?: IAction<IGame, any>[];
     onAction: (key: number) => void;
 }
 
